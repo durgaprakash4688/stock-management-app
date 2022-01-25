@@ -16,6 +16,11 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * DB Entity for Stock Managment App
+ *
+ */
+
 @Validated
 @Entity
 @Data

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service class to manage the Dow Jones Stock Index Data Sets
+ */
 @Service
 public class DataSetServiceImpl implements DataSetService{
 

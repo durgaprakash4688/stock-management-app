@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * DB Repository for the Stock Management App
+ */
 @Repository
 public interface DataSetRepository extends JpaRepository<DataSet, Long> {
 

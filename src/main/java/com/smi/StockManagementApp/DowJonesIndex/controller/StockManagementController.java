@@ -2,6 +2,7 @@ package com.smi.StockManagementApp.DowJonesIndex.controller;
 
 import com.smi.StockManagementApp.DowJonesIndex.model.DataSet;
 import com.smi.StockManagementApp.DowJonesIndex.service.DataSetService;
+import com.smi.StockManagementApp.DowJonesIndex.util.StockManagementConstants;
 import lombok.extern.java.Log;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Stock Management Controller to manage Dow Jones Index Data Sets
+ */
 @Controller
 @Log
 public class StockManagementController {
@@ -30,36 +34,36 @@ public class StockManagementController {
     @Autowired
     private DataSetService dataSetService;
 
-    @GetMapping("/")
+    @GetMapping(StockManagementConstants.INDEX_PAGE)
     public String viewHomePage(Model model) {
         try {
             DataSet dataSet = new DataSet();
-            model.addAttribute("dataSet", dataSet);
+            model.addAttribute(StockManagementConstants.DAT_SET, dataSet);
         } catch (Exception e) {
-            model.addAttribute("message", "Unable to process the request");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.UNABLE_TO_PROCESS_REQUEST);
             log.info(e.getMessage());
         }
         return "index";
     }
 
-    @GetMapping("/viewAllDataSets")
+    @GetMapping(StockManagementConstants.VIEW_ALL_DATA_SET)
     public String viewAllDataSets(Model model) {
         try {
-            model.addAttribute("listDataSets", dataSetService.getAllDataSets());
+            model.addAttribute(StockManagementConstants.LIST_DATA_SETS, dataSetService.getAllDataSets());
         } catch (Exception e) {
-            model.addAttribute("message", "Unable to process the request");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.UNABLE_TO_PROCESS_REQUEST);
             log.info(e.getMessage());
         }
 
         return "viewAllDataSets";
     }
 
-    @GetMapping("/viewUploadPage")
+    @GetMapping(StockManagementConstants.VIEW_UPLOAD_PAGE)
     public String viewUploadDataSetPage(Model model) {
         return "uploadDataSets";
     }
 
-    @PostMapping("/upload")
+    @PostMapping(StockManagementConstants.UPLOAD_PAGE)
     public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
         try {
             List<DataSet> dataSetList = new ArrayList<>();
@@ -70,7 +74,6 @@ public class StockManagementController {
             while (dataSetIterator.hasNext()) {
                 Row currentRow = dataSetIterator.next();
                 if (currentRow.getRowNum() != 0) {
-                    //Iterator<Cell> cellIterator = currentRow.iterator();
                     DataSet dataSet = DataSet.builder()
                             .stockTicker(currentRow.getCell(0).getStringCellValue())
                             .quarter(String.valueOf(currentRow.getCell(1).getNumericCellValue()))
@@ -89,47 +92,47 @@ public class StockManagementController {
                 }
             }
             dataSetService.saveDataSet(dataSetList);
-            model.addAttribute("message", "File has been uploaded successfully");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.FILE_UPLOAD_SUCCESS);
         }catch(NotOfficeXmlFileException fe){
-            model.addAttribute("message", "Please upload a valid file!!");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.UPLOAD_VALID_FILE_MESSAGE);
         }
         catch (Exception e) {
-            model.addAttribute("message", "Unable to upload the file");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.UNABLE_TO_UPLOAD_FILE_MESSAGE);
             log.info(e.getMessage());
         }
         return "uploadDataSets";
     }
 
-    @PostMapping("/showfilteredDataSet")
+    @PostMapping(StockManagementConstants.SHOW_FILTERED_DATA_SET)
     public String findDataSet(@ModelAttribute("stockTicker") String stockTicker, Model model) {
         try {
             model.addAttribute("listDataSets", dataSetService.findByStockTicker(stockTicker));
         } catch (Exception e) {
-            model.addAttribute("message", e.getMessage());
+            model.addAttribute(StockManagementConstants.MESSAGE, e.getMessage());
         }
         return "findDataSet";
     }
 
-    @GetMapping("/showNewDataSet")
+    @GetMapping(StockManagementConstants.SHOW_NEW_DATA_SET)
     public String showNewDataSet(Model model){
         DataSet dataSet = new DataSet();
         model.addAttribute("dataSet", dataSet);
         return "showNewDataSet";
     }
 
-    @PostMapping("/saveNewDataSet")
+    @PostMapping(StockManagementConstants.SAVE_NEW_DATA_SET)
     public String saveNewDataSet(@ModelAttribute("dataSet") DataSet dataSet, Model model){
         try{
             if(StringUtils.hasText(dataSet.getStockTicker())){
                 dataSetService.saveDataSet(dataSet);
                 return "redirect:/viewAllDataSets";
             }else{
-                model.addAttribute("message", "Stock Ticker cannot be empty");
+                model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.STOCK_TICKER_CANNOT_BE_EMPTY);
                 return "showNewDataSet";
             }
         }catch(Exception e) {
             log.info(e.getMessage());
-            model.addAttribute("message", "Please enter a valid input");
+            model.addAttribute(StockManagementConstants.MESSAGE, StockManagementConstants.ENTER_VALID_INPUT_MESSAGE);
         }
         return "showNewDataSet";
     }
