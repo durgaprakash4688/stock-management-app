@@ -91,7 +91,7 @@ public class StockManagementController {
             dataSetService.saveDataSet(dataSetList);
             model.addAttribute("message", "File has been uploaded successfully");
         }catch(NotOfficeXmlFileException fe){
-            model.addAttribute("message", "File Cannot be empty !!");
+            model.addAttribute("message", "Please upload a valid file!!");
         }
         catch (Exception e) {
             model.addAttribute("message", "Unable to upload the file");
@@ -119,14 +119,18 @@ public class StockManagementController {
 
     @PostMapping("/saveNewDataSet")
     public String saveNewDataSet(@ModelAttribute("dataSet") DataSet dataSet, Model model){
-        if(StringUtils.hasText(dataSet.getStockTicker())){
-            dataSetService.saveDataSet(dataSet);
-            return "redirect:/viewAllDataSets";
-        }else{
-            model.addAttribute("message", "Stock Ticker cannot be empty");
-            return "showNewDataSet";
+        try{
+            if(StringUtils.hasText(dataSet.getStockTicker())){
+                dataSetService.saveDataSet(dataSet);
+                return "redirect:/viewAllDataSets";
+            }else{
+                model.addAttribute("message", "Stock Ticker cannot be empty");
+                return "showNewDataSet";
+            }
+        }catch(Exception e) {
+            log.info(e.getMessage());
+            model.addAttribute("message", "Please enter a valid input");
         }
-
-
+        return "showNewDataSet";
     }
 }
