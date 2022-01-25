@@ -1,0 +1,24 @@
+#Application & DB Properties
+server:
+  port: 8080
+spring:
+  application:
+    name: stock-managment-app
+  datasource:
+    url: jdbc:mysql://localhost:3306/stockmanagement?useOldAliasMetadataBehavior=true&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: Welcome@2022
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+
+#DB Logging
+logging:
+  level:
+    org:
+      hibernate:
+        sql: DEBUG
+        type: TRACE
